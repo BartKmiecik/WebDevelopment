@@ -31,12 +31,6 @@ username = sp.current_user()['id']
 playlist = sp.user_playlist_create(username,'1992-04-21_Billboard_100', public=False, collaborative= False, description='Test')
 songs_uri = []
 
-# for track in titles:
-#     result = sp.search(q=f'track:{track.text.strip()} year:1992', type='track')
-#     uri = result['tracks']['items'][0]['uri']
-#     songs_uri.append(uri)
-#     sp.playlist_add_items(playlist['id'], uri)
-
 for track in titles:
     result = sp.search(q=f'track:{track.text.strip()} year:1992', type='track')
     try:
