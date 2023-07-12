@@ -12,20 +12,24 @@ amazon_headers = {
 }
 request = requests.get(url, headers=amazon_headers)
 soup = BeautifulSoup(request.text, 'lxml')
-
+treshold = 100
 
 whole_price = (soup.find(name='span', class_='a-price-whole').text.strip())
 fraction_price = (soup.find(name='span', class_='a-price-fraction').text.strip())
 price = float(f'{whole_price}{fraction_price}')
 product_title = soup.find(name='span', id='productTitle').text.strip()
 
-msg = f'Product: {product_title} is for {price} at {url}'
-print(msg)
+if price < treshold:
+    msg = f'Product on sale\n\n {product_title} is for {price} at {url}'.encode('utf-8')
+    print(msg)
+    with smtplib.SMTP('smtp.gmail.com') as smtp:
+        smtp.starttls()
+        smtp.login(user=email, password=password)
+        smtp.sendmail(email,email,msg)
+        print(msg)
 
-with smtplib.SMTP('smtp.gmail.com') as smtp:
-    smtp.starttls()
-    smtp.login(user=email, password=password)
-    smtp.sendmail(email,email,msg.encode('utf-8'))
+
+        
 
 
 
