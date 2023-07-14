@@ -12,8 +12,14 @@ driver.get("https://www.python.org/")
 
 event_times = driver.find_elements(By.CSS_SELECTOR, '.event-widget time')
 event_names = driver.find_elements(By.CSS_SELECTOR, '.event-widget li a')
+events = {}
 for n in range(len(event_times)):
-    print(event_times[n].text, event_names[n].text)
+    # print(event_times[n].text, event_names[n].text)
+    events[n] = {
+        event_names[n].text: event_times[n].text
+    }
+
+print(events)
 
 while(True):
     pass
