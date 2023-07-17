@@ -1,9 +1,25 @@
-from flask import Flask
-app = Flask(__name__)
+# from flask import Flask
+# app = Flask(__name__)
+#
+# @app.route('/')
+# def hello_world():
+#     return 'Hello, World!'
+#
+# if __name__ == "__main__":
+#     app.run()
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+import time
 
-if __name__ == "__main__":
-    app.run()
+def time_decoratr(fun):
+    start = time.time()
+    fun()
+    end = time.time()
+    running_time = end - start
+    print(running_time)
+
+@time_decoratr
+def do_smt():
+    time.sleep(1)
+
+while True:
+    pass
