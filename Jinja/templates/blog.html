@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-
+    {% for post in blog:  %}
+    <h1>{{post["title"]}}</h1>
+    <h2>{{post["subtitle"]}}</h2>
+    {% endfor %}
 </body>
 </html>

@@ -28,6 +28,14 @@ def guess_human(username):
     sex = get_sex(username)
     return render_template('guess.html', name=name, sex=sex, old=old)
 
+@app.route('/blog')
+def blog():
+    url = 'https://api.npoint.io/c790b4d5cab58020d391'
+    request = requests.get(url)
+
+    return render_template('blog.html', blog=request.json())
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
