@@ -13,5 +13,9 @@ def about():
 def detail():
     return render_template('portfolio-details.html')
 
+@app.route('/blog/<content>')
+def blog(content):
+    return render_template('inner-page-blog.html', content=content)
+
 if __name__ == '__main__':
     app.run(debug = True)
