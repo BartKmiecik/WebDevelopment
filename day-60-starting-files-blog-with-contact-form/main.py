@@ -20,14 +20,15 @@ def about():
 @app.route("/contact", methods=['POST', 'GET'])
 def contact():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        entry = request.form['message']
-        print(f'{name} {email} {phone} {entry}')
-        return f'<h1>{entry}</h1>'
+        # name = request.form['name']
+        # email = request.form['email']
+        # phone = request.form['phone']
+        # entry = request.form['message']
+        # print(f'{name} {email} {phone} {entry}')
 
-    return render_template("contact.html")
+        return render_template("contact.html", contact='Successfully sent message!')
+
+    return render_template("contact.html", contact='Contact Me')
 
 # @app.route('/form_entry', methods=['POST'])
 # def form_entry():
