@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 import os
 SECRET_KEY = os.urandom(32)
@@ -8,7 +8,8 @@ SECRET_KEY = os.urandom(32)
 
 class MyForm(FlaskForm):
     email = StringField('email')
-    password = StringField('password')
+    password = PasswordField('password')
+    submit = SubmitField("Login")
 
 
 app = Flask(__name__)
