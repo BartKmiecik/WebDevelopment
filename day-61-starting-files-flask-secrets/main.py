@@ -4,6 +4,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 import wtforms.validators as validators
 import os
+from flask_bootstrap import Bootstrap5
 SECRET_KEY = os.urandom(32)
 
 
@@ -14,6 +15,7 @@ class MyForm(FlaskForm):
 
 
 app = Flask(__name__)
+bootstrap = Bootstrap5(app)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 @app.route("/")

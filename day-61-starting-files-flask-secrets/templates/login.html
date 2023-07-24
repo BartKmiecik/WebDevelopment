@@ -1,10 +1,6 @@
-<!DOCTYPE HTML>
-
-<html>
-	<head>
-		<title>Login</title>
-	</head>
-	<body>
+{% extends "base.html" %}
+{% block title %}Success{% endblock %}
+{% block content %}
         <div class="container">
 		<h1>Login</h1>
         <!-- This is where our form will go. -->
@@ -25,5 +21,4 @@
 				{{form.submit}}
 			</form>
         </div>
-	</body>
-</html>
+{% endblock %}
