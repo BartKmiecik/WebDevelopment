@@ -25,7 +25,13 @@ def home():
 def login():
     form = MyForm()
     if form.validate_on_submit():
-        return redirect('/success')
+        _email = form.email.data
+        _password = form.password.data
+        print(f'{_email} and {_password}')
+        if _email == 'admin@email.com' and _password == '12345678':
+            return redirect('/success')
+        else:
+            return redirect('denied')
     return render_template('login.html', form=form)
 
 @app.route('/success')
