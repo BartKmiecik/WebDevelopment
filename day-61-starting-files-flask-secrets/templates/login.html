@@ -8,6 +8,10 @@
         <div class="container">
 		<h1>Login</h1>
         <!-- This is where our form will go. -->
+			<form method="POST" action="/">
+				{{ form.name.label }} {{ form.name(size=20) }}
+				<input type="submit" value="Go">
+			</form>
         </div>
 	</body>
 </html>
