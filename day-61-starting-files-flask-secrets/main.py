@@ -7,7 +7,8 @@ SECRET_KEY = os.urandom(32)
 
 
 class MyForm(FlaskForm):
-    name = StringField('name')
+    email = StringField('email')
+    password = StringField('password')
 
 
 app = Flask(__name__)
@@ -18,9 +19,11 @@ def home():
     return render_template('index.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = MyForm()
+    if form.validate_on_submit():
+        return redirect('/success')
     return render_template('login.html', form=form)
 
 
