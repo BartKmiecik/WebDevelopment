@@ -13,7 +13,7 @@ Bootstrap5(app)
 class CafeForm(FlaskForm):
     cafe = StringField('Cafe name', validators=[DataRequired()])
     submit = SubmitField('Submit')
-    location = StringField('Location', validators=[DataRequired(),URL])
+    location = StringField('Location', validators=[DataRequired(), URL()])
     open_time = StringField('Open', validators=[DataRequired()])
     close_time = StringField('Close', validators=[DataRequired()])
     coffee_rating = SelectField('Coffe_Rating', choices=[('☕️', '☕️'), ('☕️☕️', '☕️☕️'),
@@ -54,7 +54,7 @@ def home():
     return render_template("index.html")
 
 
-@app.route('/add')
+@app.route('/add', methods=['GET', 'POST'])
 def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
