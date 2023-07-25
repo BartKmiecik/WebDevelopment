@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'bootstrap5/table.html' import render_table %}
 {% block title %}Restaurants{% endblock %}
 {% block content %}
 
@@ -13,12 +14,8 @@
           Table that contains all the information from the 
           cafe-data.csv file.
                     -->
-        {% for cafe in cafes %}
-        <tr>
-            <td>{{ cafe }}</td>
-        </tr>
-        {% endfor %}
 
+          {{ render_table(data=cafes, titles=titles) }}
   	  </table>
 
       <p><a href="/">Return to index page</a></p>

@@ -23,6 +23,18 @@ class CafeForm(FlaskForm):
 # ---------------------------------------------------------------------------
 
 
+class Message:
+    def __init__(self, data):
+        self.cafe_name = data[0]
+        self.location = data[1]
+        self.open = data[2]
+        self.close = data[3]
+        self.coffee = data[4]
+        self.wifi = data[5]
+        self.power = data[6]
+
+
+
 # all Flask routes below
 @app.route("/")
 def home():
@@ -42,13 +54,29 @@ def add_cafe():
 
 @app.route('/cafes')
 def cafes():
+    msg = []
     with open('cafe-data.csv', newline='', encoding="utf8") as csv_file:
         csv_data = csv.reader(csv_file, delimiter=',')
-        list_of_rows = []
+        #list_of_rows = []
         for row in csv_data:
-            list_of_rows.append(row)
-    print(list_of_rows)
-    return render_template('cafes.html', cafes=list_of_rows)
+            #print(f'AAAA {row[4]} BBBBB {row[3]}')
+            temp_msg = Message(row)
+            msg.append(temp_msg)
+    # msg = Message(list_of_rows)
+    data = []
+    #print(msg)
+    for m in msg:
+        # print('Test')
+        # print(f"'Cafe Name': {m.cafe_name}, 'Location': {m.location}, 'Open': {m.open}, "
+        #       f"'Close': {m.close}, 'Coffe': {m.coffee}, 'Wifi': {m.wifi}, 'Power': {m.power}")
+        if m != msg[0]:
+            data.append({'Cafe Name': m.cafe_name, 'Location': m.location, 'Open': m.open,
+                     'Close': m.close, 'Coffe': m.coffee, 'Wifi': m.wifi, 'Power': m.power})
+    titles = [('Cafe Name', 'Cafe Name'), ('Location', 'Location'), ('Open', 'Open'), ('Close', 'Close'),
+              ('Coffe', 'Coffe'), ('Wifi', 'Wifi'), ('Power', 'Power')]
+
+    #print(data)
+    return render_template('cafes.html', cafes=data, titles=titles)
 
 
 if __name__ == '__main__':
