@@ -12,7 +12,6 @@ Bootstrap5(app)
 
 class CafeForm(FlaskForm):
     cafe = StringField('Cafe name', validators=[DataRequired()])
-    submit = SubmitField('Submit')
     location = StringField('Location', validators=[DataRequired(), URL()])
     open_time = StringField('Open', validators=[DataRequired()])
     close_time = StringField('Close', validators=[DataRequired()])
@@ -26,6 +25,7 @@ class CafeForm(FlaskForm):
     power_rating = SelectField('Power_Rating', choices=[('🔌', '🔌'), ('🔌🔌', '🔌🔌'),
                                                       ('🔌🔌🔌', '🔌🔌🔌'), ('🔌🔌🔌🔌', '🔌🔌🔌🔌'),
                                                       ('🔌🔌🔌🔌🔌', '🔌🔌🔌🔌🔌')], validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 # Exercise:
 # add: Location URL, open time, closing time, coffee rating, wifi rating, power outlet rating fields
@@ -59,6 +59,7 @@ def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
         print("True")
+        print(form.location)
     # Exercise:
     # Make the form write a new row into cafe-data.csv
     # with   if form.validate_on_submit()
