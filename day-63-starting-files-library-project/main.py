@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5
 from wtforms import Form, StringField, IntegerField, SubmitField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired
 
 '''
 Red underlines? Install the required packages first: 
@@ -17,7 +17,8 @@ This will install the packages from requirements.txt for this project.
 '''
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'secret key'
+bootstrap = Bootstrap5(app)
 all_books = []
 
 
@@ -37,7 +38,6 @@ def home():
     # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 9})
     # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 7})
     # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 3})
-    print(all_books)
     return render_template('index.html', library=all_books)
 
 
@@ -45,10 +45,13 @@ def home():
 def add():
     form = Books()
     if form.validate():
+        print('validate')
+        print(form)
+        print(form.title)
         all_books.append({'title': form.title, 'author': form.author, 'rating': form.rating})
 
     len(all_books)
-    return render_template('add.html')
+    return render_template('add.html', form=form)
 
 if __name__ == "__main__":
     app.run(debug=True)
