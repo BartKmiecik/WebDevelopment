@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bootstrap import Bootstrap5
-from wtforms import Form, StringField, IntegerField
+from wtforms import Form, StringField, IntegerField, SubmitField
 from wtforms.validators import DataRequired, ValidationError
 
 '''
@@ -30,19 +30,24 @@ class Books(Form):
     title = StringField('title', validators=[DataRequired()])
     author = StringField('author', validators=[DataRequired()])
     rating = IntegerField('rating', validators=[DataRequired()])
+    submit = SubmitField()
 
 @app.route('/')
 def home():
-    all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 9})
-    all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 7})
-    all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 3})
+    # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 9})
+    # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 7})
+    # all_books.append({'title': 'HarryPotter', 'author': 'J.K.Rowling', 'rating': 3})
     print(all_books)
     return render_template('index.html', library=all_books)
 
 
-@app.route("/add")
+@app.route("/add", methods=['GET', 'POST'])
 def add():
+    form = Books()
+    if form.validate():
+        all_books.append({'title': form.title, 'author': form.author, 'rating': form.rating})
 
+    len(all_books)
     return render_template('add.html')
 
 if __name__ == "__main__":
