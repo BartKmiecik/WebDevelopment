@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired, URL
 import csv
+import pandas as pd
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -58,11 +59,16 @@ def home():
 def add_cafe():
     form = CafeForm()
     if form.validate_on_submit():
-        print("True")
-        print(form.location)
-    # Exercise:
-    # Make the form write a new row into cafe-data.csv
-    # with   if form.validate_on_submit()
+        row = {'Cafe Name': form.cafe.data,'Location': form.location.data,'Open': form.open_time.data,
+               'Close': form.close_time.data, 'Coffee': form.coffee_rating.data, 'Wifi': form.wifi_rating.data,
+               'Power': form.power_rating.data}
+        df = pd.read_csv('cafe-data.csv')
+        df = pd.DataFrame(df)
+        df.loc[len(df)] = row
+        print(df)
+        df.to_csv('cafe-data.csv', index=False)
+        return cafes()
+
     return render_template('add.html', form=form)
 
 
