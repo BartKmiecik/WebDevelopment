@@ -1,8 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-from flask_bootstrap import Bootstrap5
-from wtforms import Form, StringField, IntegerField, SubmitField
-from wtforms.validators import DataRequired
-
 '''
 Red underlines? Install the required packages first: 
 Open the Terminal in PyCharm (bottom left). 
@@ -18,7 +14,6 @@ This will install the packages from requirements.txt for this project.
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret key'
-bootstrap = Bootstrap5(app)
 all_books = []
 
 
@@ -27,11 +22,11 @@ all_books = []
 #         raise ValidationError('Incorrect integer. Pass number from 0 - 10')
 
 
-class Books(Form):
-    title = StringField('title', validators=[DataRequired()])
-    author = StringField('author', validators=[DataRequired()])
-    rating = IntegerField('rating', validators=[DataRequired()])
-    submit = SubmitField()
+# class Books(Form):
+#     title = StringField('title', validators=[DataRequired()])
+#     author = StringField('author', validators=[DataRequired()])
+#     rating = IntegerField('rating', validators=[DataRequired()])
+#     submit = SubmitField()
 
 @app.route('/')
 def home():
@@ -43,15 +38,15 @@ def home():
 
 @app.route("/add", methods=['GET', 'POST'])
 def add():
-    form = Books()
-    if form.validate():
-        print('validate')
-        print(form)
-        print(form.title)
-        all_books.append({'title': form.title, 'author': form.author, 'rating': form.rating})
-
-    len(all_books)
-    return render_template('add.html', form=form)
+    # form = Books()
+    # if form.validate():
+    #     print('validate')
+    #     print(form)
+    #    # print(form.title)
+    #     all_books.append({'title': form.title, 'author': form.author, 'rating': form.rating})
+    #
+    # len(all_books)
+    return render_template('add.html'   )
 
 if __name__ == "__main__":
     app.run(debug=True)
