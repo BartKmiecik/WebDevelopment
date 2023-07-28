@@ -11,7 +11,7 @@ db = SQLAlchemy()
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///best_movies.db"
 db.init_app(app)
-
+Bootstrap5(app)
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, unique=True, nullable=False)
@@ -22,20 +22,6 @@ class Movie(db.Model):
     review = db.Column(db.String, unique=True, nullable=False)
     img_url = db.Column(db.String, unique=True, nullable=False)
 
-
-second_movie = Movie(
-    title="Avatar The Way of Water",
-    year=2022,
-    description="Set more than a decade after the events of the first film, learn the story of the Sully family (Jake, Neytiri, and their kids), the trouble that follows them, the lengths they go to keep each other safe, the battles they fight to stay alive, and the tragedies they endure.",
-    rating=7.3,
-    ranking=9,
-    review="I liked the water.",
-    img_url="https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
-)
-with app.app_context():
-    db.create_all()
-    db.session.add(second_movie)
-    db.session.commit()
 
 '''
 Red underlines? Install the required packages first: 
@@ -50,14 +36,30 @@ pip3 install -r requirements.txt
 This will install the packages from requirements.txt for this project.
 '''
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-Bootstrap5(app)
+
+second_movie = Movie(
+    title="Avatar The Way of Water",
+    year=2022,
+    description="Set more than a decade after the events of the first film, learn the story of the Sully family (Jake, Neytiri, and their kids), the trouble that follows them, the lengths they go to keep each other safe, the battles they fight to stay alive, and the tragedies they endure.",
+    rating=7.3,
+    ranking=9,
+    review="I liked the water.",
+    img_url="https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
+)
 
 
 @app.route("/")
 def home():
     return render_template("index.html")
+
+@app.route("/movies")
+def user_list():
+    movie = None
+    with app.app_context():
+        db.create_all()
+        movies = db.session.execute(db.select(Movie).order_by(Movie.ranking)).scalars()
+        movie = movies.all()[0].title
+    return movie
 
 
 if __name__ == '__main__':
