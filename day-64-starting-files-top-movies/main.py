@@ -50,16 +50,16 @@ second_movie = Movie(
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    with app.app_context():
+        db.create_all()
+        movies = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+        movie = movies.all()[0][0].title
+        # print(movies.all()[0][0].title)
+        return render_template("index.html", movie=movie)
 
 @app.route("/movies")
 def user_list():
-    movie = None
-    with app.app_context():
-        db.create_all()
-        movies = db.session.execute(db.select(Movie).order_by(Movie.ranking)).scalars()
-        movie = movies.all()[0].title
-    return movie
+    return "movie"
 
 
 if __name__ == '__main__':
