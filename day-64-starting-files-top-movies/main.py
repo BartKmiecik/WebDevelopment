@@ -5,6 +5,37 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 import requests
+from movie import Movie
+
+db = SQLAlchemy()
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///best_movies.db"
+db.init_app(app)
+
+class Movie(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, unique=True, nullable=False)
+    year = db.Column(db.Integer, unique=True, nullable=False)
+    description = db.Column(db.String, unique=True, nullable=False)
+    rating = db.Column(db.Float, nullable=False)
+    ranking = db.Column(db.Integer, unique=True, nullable=False)
+    review = db.Column(db.String, unique=True, nullable=False)
+    img_url = db.Column(db.String, unique=True, nullable=False)
+
+
+second_movie = Movie(
+    title="Avatar The Way of Water",
+    year=2022,
+    description="Set more than a decade after the events of the first film, learn the story of the Sully family (Jake, Neytiri, and their kids), the trouble that follows them, the lengths they go to keep each other safe, the battles they fight to stay alive, and the tragedies they endure.",
+    rating=7.3,
+    ranking=9,
+    review="I liked the water.",
+    img_url="https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
+)
+with app.app_context():
+    db.create_all()
+    db.session.add(second_movie)
+    db.session.commit()
 
 '''
 Red underlines? Install the required packages first: 
