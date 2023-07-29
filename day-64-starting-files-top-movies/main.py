@@ -62,6 +62,10 @@ def home():
 def user_list():
     return "movie"
 
+@app.route("/edit")
+def edit_movie():
+    return render_template("edit.html")
+
 
 if __name__ == '__main__':
     app.run(debug=True)
