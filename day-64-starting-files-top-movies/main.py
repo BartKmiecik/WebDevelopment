@@ -52,10 +52,11 @@ second_movie = Movie(
 def home():
     with app.app_context():
         db.create_all()
-        movies = db.session.execute(db.select(Movie).order_by(Movie.ranking))
-        movie = movies.all()[0][0].title
+        querry = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+        #movie = movies.all()[0][0].title
+        movies = querry
         # print(movies.all()[0][0].title)
-        return render_template("index.html", movie=movie)
+        return render_template("index.html", movies=movies)
 
 @app.route("/movies")
 def user_list():

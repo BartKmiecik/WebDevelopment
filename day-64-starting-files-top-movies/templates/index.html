@@ -7,8 +7,10 @@
   <h1 class="heading">My Top 10 Movies</h1>
   <p class="description">These are my all-time favourite movies.</p>
 
-    <h1>AAAAAA{{movie}}</h1>
-        <p>dfsgsdfgdfsgdsf</p>
+
+    {% for movie in movies.all() %}
+    <h1>{{movie[0].title}}</h1>
+    {% endfor %}
 
   <div class="card" >
     <div class="front" style="background-image: url('https://www.shortlist.com/media/images/2019/05/the-30-coolest-alternative-movie-posters-ever-2-1556670563-K61a-column-width-inline.jpg');">
