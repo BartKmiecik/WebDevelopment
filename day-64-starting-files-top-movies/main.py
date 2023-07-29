@@ -62,9 +62,14 @@ def home():
 def user_list():
     return "movie"
 
-@app.route("/edit")
-def edit_movie():
-    return render_template("edit.html")
+@app.route("/edit/<movie>")
+def edit_movie(movie):
+    with app.app_context():
+        db.create_all()
+        querry = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+        #movie = movies.all()[0][0].title
+        movies = querry
+    return render_template("edit.html", movie=movie)
 
 
 if __name__ == '__main__':
