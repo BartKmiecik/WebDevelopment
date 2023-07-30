@@ -33,7 +33,7 @@ class SearchTitle(FlaskForm):
 
 class MovieUpdate(FlaskForm):
     rating = FloatField(validators=[DataRequired()])
-    description = StringField(validators=[DataRequired()])
+    review = StringField(validators=[DataRequired()])
     submit = SubmitField()
 
 '''
@@ -65,9 +65,16 @@ second_movie = Movie(
 def home():
     with app.app_context():
         db.create_all()
+        query = db.session.execute(db.select(Movie).order_by(Movie.year))
+        movies = query
+        index = 1
+        for movie in movies.all():
+            movie[0].ranking = index
+            index += 1
+        db.session.commit()
+        db.create_all()
         query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
         movies = query
-        db.session.commit()
         return render_template("index.html", movies=movies)
 
 
@@ -118,13 +125,13 @@ def edit_movie(movie):
     form = MovieUpdate()
     if form.validate_on_submit():
         new_rating = form.rating
-        new_description = form.description
+        new_review = form.review
         with app.app_context():
             db.create_all()
             query = db.session.execute(db.select(Movie).where(Movie.title == movie))
             _movie = query.first()[0]
-            _movie.description = new_description.data
             _movie.rating = new_rating.data
+            _movie.review = new_review.data
             db.session.commit()
             return home()
 
