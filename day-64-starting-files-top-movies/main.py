@@ -2,16 +2,21 @@ from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, FloatField
 from wtforms.validators import DataRequired
 import requests
 from movie import Movie
+import os
+SECRET_KEY = os.urandom(32)
+
 
 db = SQLAlchemy()
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///best_movies.db"
+app.config['SECRET_KEY'] = SECRET_KEY
 db.init_app(app)
 Bootstrap5(app)
+
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, unique=True, nullable=False)
@@ -24,7 +29,7 @@ class Movie(db.Model):
 
 
 class MovieUpdate(FlaskForm):
-    rating = StringField(validators=[DataRequired()])
+    rating = FloatField(validators=[DataRequired()])
     description = StringField(validators=[DataRequired()])
     submit = SubmitField()
 
@@ -57,8 +62,9 @@ second_movie = Movie(
 def home():
     with app.app_context():
         db.create_all()
-        querry = db.session.execute(db.select(Movie).order_by(Movie.ranking))
-        movies = querry
+        query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+        movies = query
+        db.session.commit()
         return render_template("index.html", movies=movies)
 
 @app.route("/movies")
@@ -75,13 +81,13 @@ def edit_movie(movie):
             db.create_all()
             query = db.session.execute(db.select(Movie).where(Movie.title == movie))
             _movie = query.first()[0]
-            _movie.description = new_description
-            _movie.rating = new_rating
+            _movie.description = new_description.data
+            _movie.rating = new_rating.data
             db.session.commit()
-            return render_template('index/html')
+            return home()
             # print(_movie)
 
-    return render_template("edit.html", movie=movie)
+    return render_template("edit.html", movie=movie, form=form)
 
 
 if __name__ == '__main__':
