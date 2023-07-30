@@ -26,6 +26,10 @@ class Movie(db.Model):
     review = db.Column(db.String, unique=True, nullable=False)
     img_url = db.Column(db.String, unique=True, nullable=False)
 
+class SearchTitle(FlaskForm):
+    title = StringField(validators=[DataRequired()])
+    submit = SubmitField()
+
 
 class MovieUpdate(FlaskForm):
     rating = FloatField(validators=[DataRequired()])
@@ -59,13 +63,34 @@ second_movie = Movie(
 
 @app.route("/")
 def home():
-    searcher.search_movie('Gladiator')
     with app.app_context():
         db.create_all()
         query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
         movies = query
         db.session.commit()
         return render_template("index.html", movies=movies)
+
+
+@app.route("/add", methods=['GET', 'POST'])
+def add_movie():
+    form = SearchTitle()
+    if form.validate_on_submit():
+        title = form.title.data
+        data = searcher.search_movie(title)['results']
+        year = data['release_date'],
+        description = data['overview']
+        rating = data['vote_average']
+        ranking = 9,
+        review = "I liked the water.",
+        img_url = f"https://image.tmdb.org/t/p/w500/{data['backdrop_path']}"
+        with app.app_context():
+            db.create_all()
+            query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+            movies = query
+            db.session.commit()
+
+    return render_template("add.html", form=form)
+
 
 @app.route("/delete/<movie>")
 def delete(movie):
