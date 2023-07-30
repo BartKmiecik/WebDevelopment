@@ -23,6 +23,11 @@ class Movie(db.Model):
     img_url = db.Column(db.String, unique=True, nullable=False)
 
 
+class MovieUpdate(FlaskForm):
+    rating = StringField(validators=[DataRequired()])
+    description = StringField(validators=[DataRequired()])
+    submit = SubmitField()
+
 '''
 Red underlines? Install the required packages first: 
 Open the Terminal in PyCharm (bottom left). 
@@ -53,22 +58,29 @@ def home():
     with app.app_context():
         db.create_all()
         querry = db.session.execute(db.select(Movie).order_by(Movie.ranking))
-        #movie = movies.all()[0][0].title
         movies = querry
-        # print(movies.all()[0][0].title)
         return render_template("index.html", movies=movies)
 
 @app.route("/movies")
 def user_list():
     return "movie"
 
-@app.route("/edit/<movie>")
+@app.route("/edit/<movie>", methods=['POST', 'GET'])
 def edit_movie(movie):
-    with app.app_context():
-        db.create_all()
-        querry = db.session.execute(db.select(Movie).order_by(Movie.ranking))
-        #movie = movies.all()[0][0].title
-        movies = querry
+    form = MovieUpdate()
+    if form.validate_on_submit():
+        new_rating = form.rating
+        new_description = form.description
+        with app.app_context():
+            db.create_all()
+            query = db.session.execute(db.select(Movie).where(Movie.title == movie))
+            _movie = query.first()[0]
+            _movie.description = new_description
+            _movie.rating = new_rating
+            db.session.commit()
+            return render_template('index/html')
+            # print(_movie)
+
     return render_template("edit.html", movie=movie)
 
 
