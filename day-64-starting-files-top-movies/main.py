@@ -67,9 +67,13 @@ def home():
         db.session.commit()
         return render_template("index.html", movies=movies)
 
-@app.route("/movies")
-def user_list():
-    return "movie"
+@app.route("/delete/<movie>")
+def delete(movie):
+    with app.app_context():
+        db.create_all()
+        db.session.execute(db.delete(Movie).where(Movie.title == movie))
+        db.session.commit()
+        return home()
 
 @app.route("/edit/<movie>", methods=['POST', 'GET'])
 def edit_movie(movie):
@@ -85,7 +89,6 @@ def edit_movie(movie):
             _movie.rating = new_rating.data
             db.session.commit()
             return home()
-            # print(_movie)
 
     return render_template("edit.html", movie=movie, form=form)
 
