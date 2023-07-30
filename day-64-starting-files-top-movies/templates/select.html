@@ -7,7 +7,7 @@
     <h1 class="heading">Select Movie</h1>
     {% for movie in movies %}
   <p>
-    <a href="#">{{movie}}</a>
+    <a href="/add_selected/{{movie['id']}}">{{movie['original_title']}}  {{movie['release_date']}}</a>
   </p>
     {% endfor %}
 </div>

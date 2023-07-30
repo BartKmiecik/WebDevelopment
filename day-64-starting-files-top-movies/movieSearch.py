@@ -18,6 +18,13 @@ class Search_movie():
         print(request.json())
         return request.json()
 
+    def search_by_id(self, idx):
+        url = "https://api.themoviedb.org/3/movie"
+        query = url + f"/{idx}"
+        print(query)
+        request = requests.get(url=query, headers=self.headers)
+        print(request.json())
+        return request.json()
 
 
 
