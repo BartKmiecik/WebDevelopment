@@ -77,20 +77,26 @@ def add_movie():
     if form.validate_on_submit():
         title = form.title.data
         data = searcher.search_movie(title)['results']
-        year = data['release_date'],
-        description = data['overview']
-        rating = data['vote_average']
-        ranking = 9,
-        review = "I liked the water.",
-        img_url = f"https://image.tmdb.org/t/p/w500/{data['backdrop_path']}"
-        with app.app_context():
-            db.create_all()
-            query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
-            movies = query
-            db.session.commit()
+        return render_template('select.html', movies=data)
+        # title = form.title.data
+        # data = searcher.search_movie(title)['results']
+        # year = data['release_date'],
+        # description = data['overview']
+        # rating = data['vote_average']
+        # ranking = 9,
+        # review = "I liked the water.",
+        # img_url = f"https://image.tmdb.org/t/p/w500/{data['backdrop_path']}"
+        # with app.app_context():
+        #     db.create_all()
+        #     query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
+        #     movies = query
+        #     db.session.commit()
 
     return render_template("add.html", form=form)
 
+@app.route("/select/<data>" )
+def select(data):
+    return render_template("select.html", movies=data)
 
 @app.route("/delete/<movie>")
 def delete(movie):
