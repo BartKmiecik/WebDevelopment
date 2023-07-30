@@ -4,18 +4,17 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, FloatField
 from wtforms.validators import DataRequired
-import requests
-from movie import Movie
+from movieSearch import Search_movie
 import os
+
 SECRET_KEY = os.urandom(32)
-
-
 db = SQLAlchemy()
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///best_movies.db"
 app.config['SECRET_KEY'] = SECRET_KEY
 db.init_app(app)
 Bootstrap5(app)
+searcher = Search_movie()
 
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +59,7 @@ second_movie = Movie(
 
 @app.route("/")
 def home():
+    searcher.search_movie('Gladiator')
     with app.app_context():
         db.create_all()
         query = db.session.execute(db.select(Movie).order_by(Movie.ranking))
