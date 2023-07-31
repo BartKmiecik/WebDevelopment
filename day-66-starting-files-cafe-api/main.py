@@ -97,6 +97,8 @@ def search():
                          "coffee_price": cafe.coffee_price}
             all_cafes.append(cafe_dict)
         db.session.commit()
+        if len(all_cafes) == 0:
+            return jsonify(error={"Not found": "Sorry"})
         return jsonify(all_cafes=all_cafes)
 
 
