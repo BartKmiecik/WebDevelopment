@@ -48,20 +48,33 @@ def get_random():
         db.create_all()
         query = db.session.execute(db.select(Cafe).order_by(Cafe.id))
         cafes = query.all()
-        print('AAAAAAAAAAAAAAAAAAAAAA')
-        print(cafes)
-        print(len(cafes))
-        print('BBBBBBBBBBBBBBBBBBB')
         rand = random.randint(0, len(cafes)-1)
-        print(rand)
-        print(cafes[rand][0].id)
-        #return f"<p>{cafes[rand][0].name}</p>"
         cafe = cafes[rand][0]
         cafe_dict = {"id":cafe.id, "name":cafe.name, "map_url":cafe.map_url, "img_url":cafe.img_url,
                        "location":cafe.location,"seats":cafe.seats, "has_toilet":cafe.has_toilet,
                        "has_wifi":cafe.has_wifi, "has_sockets":cafe.has_sockets, "can_take_calls":cafe.can_take_calls,
                        "coffee_price":cafe.coffee_price}
+        db.session.commit()
         return jsonify(cafe=cafe_dict)
+
+
+@app.route("/all")
+def get_all():
+    with app.app_context():
+        db.create_all()
+        query = db.session.execute(db.select(Cafe).order_by(Cafe.id))
+        cafes = query.all()
+        all_cafes = []
+        for cafe in cafes:
+            cafe = cafe[0]
+            cafe_dict = {"id": cafe.id, "name": cafe.name, "map_url": cafe.map_url, "img_url": cafe.img_url,
+                         "location": cafe.location, "seats": cafe.seats, "has_toilet": cafe.has_toilet,
+                         "has_wifi": cafe.has_wifi, "has_sockets": cafe.has_sockets,
+                         "can_take_calls": cafe.can_take_calls,
+                         "coffee_price": cafe.coffee_price}
+            all_cafes.append(cafe_dict)
+        db.session.commit()
+        return jsonify(all_cafes=all_cafes)
 
 
 ## HTTP GET - Read Record
