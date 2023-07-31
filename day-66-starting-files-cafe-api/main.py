@@ -57,11 +57,12 @@ def get_random():
         print(cafes[rand][0].id)
         #return f"<p>{cafes[rand][0].name}</p>"
         cafe = cafes[rand][0]
-        return jsonify(id=cafe.id, name = cafe.name, map_url = cafe.map_url, img_url = cafe.img_url,
-                       location = cafe.location, seats = cafe.seats, has_toilet = cafe.has_toilet,
-                       has_wifi = cafe.has_wifi, has_sockets = cafe.has_sockets, can_take_calls = cafe.can_take_calls,
-                       coffee_price = cafe.coffee_price)
-    
+        cafe_dict = {"id":cafe.id, "name":cafe.name, "map_url":cafe.map_url, "img_url":cafe.img_url,
+                       "location":cafe.location,"seats":cafe.seats, "has_toilet":cafe.has_toilet,
+                       "has_wifi":cafe.has_wifi, "has_sockets":cafe.has_sockets, "can_take_calls":cafe.can_take_calls,
+                       "coffee_price":cafe.coffee_price}
+        return jsonify(cafe=cafe_dict)
+
 
 ## HTTP GET - Read Record
 
