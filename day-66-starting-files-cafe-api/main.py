@@ -77,6 +77,30 @@ def get_all():
         return jsonify(all_cafes=all_cafes)
 
 
+@app.route('/search', methods=["GET"])
+def search():
+    print('start searching')
+    with app.app_context():
+        loc = request.args.get('loc', None)
+        print(loc)
+        db.create_all()
+        query = db.session.execute(db.select(Cafe).where(Cafe.location == loc))
+        cafes = query.all()
+        all_cafes = []
+        print(cafes)
+        for cafe in cafes:
+            cafe = cafe[0]
+            cafe_dict = {"id": cafe.id, "name": cafe.name, "map_url": cafe.map_url, "img_url": cafe.img_url,
+                         "location": cafe.location, "seats": cafe.seats, "has_toilet": cafe.has_toilet,
+                         "has_wifi": cafe.has_wifi, "has_sockets": cafe.has_sockets,
+                         "can_take_calls": cafe.can_take_calls,
+                         "coffee_price": cafe.coffee_price}
+            all_cafes.append(cafe_dict)
+        db.session.commit()
+        return jsonify(all_cafes=all_cafes)
+
+
+
 ## HTTP GET - Read Record
 
 ## HTTP POST - Create Record
