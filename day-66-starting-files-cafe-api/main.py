@@ -82,12 +82,10 @@ def search():
     print('start searching')
     with app.app_context():
         loc = request.args.get('loc', None)
-        print(loc)
         db.create_all()
         query = db.session.execute(db.select(Cafe).where(Cafe.location == loc))
         cafes = query.all()
         all_cafes = []
-        print(cafes)
         for cafe in cafes:
             cafe = cafe[0]
             cafe_dict = {"id": cafe.id, "name": cafe.name, "map_url": cafe.map_url, "img_url": cafe.img_url,
@@ -102,6 +100,22 @@ def search():
         return jsonify(all_cafes=all_cafes)
 
 
+@app.route('/add', methods=["POST"])
+def add():
+    if request.method == 'POST':
+        _name = request.form['name']
+        _map_url = request.form['map_url']
+        with app.app_context():
+            db.create_all()
+            idx_query = db.session.execute(db.select(Cafe).order_by(Cafe.id)).all()
+            idx = idx_query[-1][0].id + 1
+            print(idx)
+            new_cafe = Cafe(id=idx,name=_name, map_url=_map_url, img_url="NONE", location = "NONE", seats = "NONE",
+                            has_toilet = True, has_wifi = True, has_sockets = True, can_take_calls = True,
+                            coffee_price = "NONE")
+            db.session.add(new_cafe)
+            db.session.commit()
+            return jsonify(response={'success': [_name, _map_url]})
 
 ## HTTP GET - Read Record
 
