@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -28,7 +28,7 @@ Bootstrap5(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy()
 db.init_app(app)
-
+ckeditor = CKEditor(app)
 
 # CONFIGURE TABLE
 class BlogPost(db.Model):
@@ -44,6 +44,12 @@ class BlogPost(db.Model):
 with app.app_context():
     db.create_all()
 
+class BlogPostForm(FlaskForm):
+    title = StringField("title", validators=[DataRequired()])
+    subtitle = StringField("subtitle", validators=[DataRequired()])
+    author = StringField('author', validators=[DataRequired()])
+    background_url = StringField('background_url')
+    body = StringField("body", validators=[DataRequired()])
 
 @app.route('/')
 def get_all_posts():
@@ -60,6 +66,13 @@ def show_post(post_id):
 
 
 # TODO: add_new_post() to create a new blog post
+
+@app.route('/new_post', methods=["GET", "POST"])
+def new_post():
+    form = BlogPostForm()
+    # if request.method == 'POST':
+    #     data = request.form.get('ckeditor')
+    return render_template('make-post.html', form=form)
 
 # TODO: edit_post() to change an existing blog post
 
