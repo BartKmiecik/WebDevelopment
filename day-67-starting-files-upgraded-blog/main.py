@@ -5,7 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
-from datetime import date
+import datetime
 
 '''
 Make sure the required packages are installed: 
@@ -85,6 +85,8 @@ def new_post():
     form = BlogPostForm()
     # form.body.data = get_the_article_body_from_somewhere()
     if form.validate():
+        x = datetime.datetime.now()
+        year, month, day = x.strftime("%Y"), x.strftime("%b"), x.strftime("%d")
         query = db.session.execute(db.select(BlogPost).order(BlogPost.id))
         blog_posts = query.all()
         idx = blog_posts[-1].id + 1
@@ -93,7 +95,7 @@ def new_post():
             id = idx,
             title = form.title.data,
             subtitle = form.subtitle.data,
-            date = 'July 21 2023',
+            date = f'{month} {day} {year}',
             author = form.author.data,
             img_url = form.background_url.data
         )
@@ -106,7 +108,16 @@ def new_post():
 
 # TODO: edit_post() to change an existing blog post
 
+@app.route('/edit_post/<post-id>', methods='PATCH')
+def edit():
+    post_id = request.args.get('post_id')
+    with app.app_context():
+        db.create_all()
+        query = db.get_or_404(BlogPost, post_id)
+        requested_post = query
+        print(requested_post)
 
+    redirect('/')
 
 # TODO: delete_post() to remove a blog post from the database
 
