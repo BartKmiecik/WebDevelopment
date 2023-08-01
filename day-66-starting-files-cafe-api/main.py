@@ -118,19 +118,21 @@ def add():
             return jsonify(response={'success': [_name, _map_url]})
 
 
-@app.route('/update-price/<idx>')
+@app.route('/update-price/<idx>', methods=['PATCH'])
 def update_price(idx):
-    print('Inside update')
-    with app.app_context():
-        print('context')
-        db.create_all()
-        print(idx)
-        query = db.get_or_404(Cafe, idx)
-        cafe = query
-        print(cafe)
-        print(cafe.id)
-        db.session.commit()
-        return f'<p>{idx}</p>'
+    if request.method == 'PATCH':
+        with app.app_context():
+            db.create_all()
+            query = db.get_or_404(Cafe, idx)
+            cafe = query
+            cafe.coffee_price = request.form['new_price']
+            cafe_dict = {"id": cafe.id, "name": cafe.name, "map_url": cafe.map_url, "img_url": cafe.img_url,
+                         "location": cafe.location, "seats": cafe.seats, "has_toilet": cafe.has_toilet,
+                         "has_wifi": cafe.has_wifi, "has_sockets": cafe.has_sockets,
+                         "can_take_calls": cafe.can_take_calls,
+                         "coffee_price": cafe.coffee_price}
+            db.session.commit()
+            return jsonify(cafe_updated=cafe_dict)
 
 
 ## HTTP GET - Read Record
