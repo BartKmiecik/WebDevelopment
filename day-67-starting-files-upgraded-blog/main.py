@@ -62,15 +62,19 @@ def get_all_posts():
         blog_posts = query.all()
         for post in blog_posts:
             posts.append(post[0])
-        # db.session.commit()
-        print(posts)
     return render_template("index.html", all_posts=posts)
 
 # TODO: Add a route so that you can click on individual posts.
-@app.route('/')
-def show_post(post_id):
+@app.route('/show_post', methods=['GET'])
+def show_post():
     # TODO: Retrieve a BlogPost from the database based on the post_id
     requested_post = "Grab the post from your database"
+    post_id = request.args.get('post_id')
+    with app.app_context():
+        db.create_all()
+        query = db.get_or_404(BlogPost, post_id)
+        requested_post = query
+        print(requested_post)
     return render_template("post.html", post=requested_post)
 
 
@@ -101,6 +105,8 @@ def new_post():
     return render_template('make-post.html', form=form)
 
 # TODO: edit_post() to change an existing blog post
+
+
 
 # TODO: delete_post() to remove a blog post from the database
 
