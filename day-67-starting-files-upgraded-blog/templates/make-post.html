@@ -25,9 +25,9 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         <!-- TODO:-Add CKEditor and render the form here -->
+          {{ render_form(form) }}
           {{ ckeditor.load() }}
-        {{ render_form(form) }}
-         {{ ckeditor.config(name='body') }}
+          {{ ckeditor.config(name='body') }}
         <script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
       </div>
     </div>

@@ -41,15 +41,15 @@ class BlogPost(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
 
 
-with app.app_context():
-    db.create_all()
+# with app.app_context():
+#     db.create_all()
 
 class BlogPostForm(FlaskForm):
     title = StringField("title", validators=[DataRequired()])
     subtitle = StringField("subtitle", validators=[DataRequired()])
     author = StringField('author', validators=[DataRequired()])
     background_url = StringField('background_url')
-    body = StringField("body", validators=[DataRequired()])
+    body = CKEditorField("body")
     submit = SubmitField()
 
 @app.route('/')
@@ -71,8 +71,22 @@ def show_post(post_id):
 @app.route('/new_post', methods=["GET", "POST"])
 def new_post():
     form = BlogPostForm()
-    # if request.method == 'POST':
-    #     data = request.form.get('ckeditor')
+    # form.body.data = get_the_article_body_from_somewhere()
+    if form.validate():
+        new_post = BlogPost(
+            body = form.body.data,
+            id = 4,
+            title = form.title.data,
+            subtitle = form.subtitle.data,
+            date = 'July 21 2023',
+            author = form.author.data,
+            img_url = form.background_url.data
+        )
+        with app.app_context():
+            db.create_all()
+            db.session.add(new_post)
+            db.session.commit()
+
     return render_template('make-post.html', form=form)
 
 # TODO: edit_post() to change an existing blog post
