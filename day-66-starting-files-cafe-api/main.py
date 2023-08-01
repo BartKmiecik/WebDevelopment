@@ -136,7 +136,7 @@ def update_price(idx):
             return jsonify(cafe_updated=cafe_dict)
 
 
-@app.route('/report-closed/<idx>', methods=['POST'])
+@app.route('/report-closed/<idx>', methods=['DELETE'])
 def close_cafe(idx):
     key = request.args.get('api-key')
     if key != app.secret_key:
