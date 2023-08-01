@@ -56,6 +56,14 @@ class BlogPostForm(FlaskForm):
 def get_all_posts():
     # TODO: Query the database for all the posts. Convert the data to a python list.
     posts = []
+    with app.app_context():
+        db.create_all()
+        query = db.session.execute(db.select(BlogPost).order_by(BlogPost.id))
+        blog_posts = query.all()
+        for post in blog_posts:
+            posts.append(post[0])
+        # db.session.commit()
+        print(posts)
     return render_template("index.html", all_posts=posts)
 
 # TODO: Add a route so that you can click on individual posts.
@@ -73,9 +81,12 @@ def new_post():
     form = BlogPostForm()
     # form.body.data = get_the_article_body_from_somewhere()
     if form.validate():
+        query = db.session.execute(db.select(BlogPost).order(BlogPost.id))
+        blog_posts = query.all()
+        idx = blog_posts[-1].id + 1
         new_post = BlogPost(
             body = form.body.data,
-            id = 4,
+            id = idx,
             title = form.title.data,
             subtitle = form.subtitle.data,
             date = 'July 21 2023',
