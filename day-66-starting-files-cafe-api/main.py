@@ -117,6 +117,22 @@ def add():
             db.session.commit()
             return jsonify(response={'success': [_name, _map_url]})
 
+
+@app.route('/update-price/<idx>')
+def update_price(idx):
+    print('Inside update')
+    with app.app_context():
+        print('context')
+        db.create_all()
+        print(idx)
+        query = db.get_or_404(Cafe, idx)
+        cafe = query
+        print(cafe)
+        print(cafe.id)
+        db.session.commit()
+        return f'<p>{idx}</p>'
+
+
 ## HTTP GET - Read Record
 
 ## HTTP POST - Create Record
