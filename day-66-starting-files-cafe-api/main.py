@@ -20,6 +20,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cafes.db'
 db = SQLAlchemy()
 db.init_app(app)
+app.secret_key = 'testcik'
 
 
 ##Cafe TABLE Configuration
@@ -125,7 +126,7 @@ def update_price(idx):
             db.create_all()
             query = db.get_or_404(Cafe, idx)
             cafe = query
-            cafe.coffee_price = request.form['new_price']
+            cafe.coffee_price = request.args.get('new_price')
             cafe_dict = {"id": cafe.id, "name": cafe.name, "map_url": cafe.map_url, "img_url": cafe.img_url,
                          "location": cafe.location, "seats": cafe.seats, "has_toilet": cafe.has_toilet,
                          "has_wifi": cafe.has_wifi, "has_sockets": cafe.has_sockets,
@@ -133,6 +134,22 @@ def update_price(idx):
                          "coffee_price": cafe.coffee_price}
             db.session.commit()
             return jsonify(cafe_updated=cafe_dict)
+
+
+@app.route('/report-closed/<idx>', methods=['POST'])
+def close_cafe(idx):
+    key = request.args.get('api-key')
+    if key != app.secret_key:
+        return jsonify(error="wrong key")
+    with app.app_context():
+        db.create_all()
+        query = db.get_or_404(Cafe, idx)
+        cafe = query
+        cafe_name = cafe.name
+        db.session.delete(cafe)
+        db.session.commit()
+        return jsonify(success=f'Cafe {cafe_name} has been deleted')
+
 
 
 ## HTTP GET - Read Record
