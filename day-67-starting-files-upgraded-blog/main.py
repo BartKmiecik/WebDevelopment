@@ -50,6 +50,7 @@ class BlogPostForm(FlaskForm):
     author = StringField('author', validators=[DataRequired()])
     background_url = StringField('background_url')
     body = StringField("body", validators=[DataRequired()])
+    submit = SubmitField()
 
 @app.route('/')
 def get_all_posts():

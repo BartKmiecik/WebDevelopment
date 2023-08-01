@@ -1,6 +1,6 @@
 {% block content %}
 {% include "header.html" %}
-
+{% from 'bootstrap5/form.html' import render_form %}
 <!-- Page Header -->
 <header
   class="masthead"
@@ -26,16 +26,8 @@
       <div class="col-lg-8 col-md-10 mx-auto">
         <!-- TODO:-Add CKEditor and render the form here -->
           {{ ckeditor.load() }}
-         <form method="post">
-           {{ form.csrf_token }}
-           {{ form.title.label }} {{ form.title() }} <br>
-           {{ form.subtitle.label }} {{ form.subtitle() }} <br>
-           {{ form.author.label }} {{ form.author() }} <br>
-           {{ form.background_url.label }} {{ form.background_url() }} <br>
-           {{ form.body.label }} {{ form.body() }}
-           {{ ckeditor.config(name='body') }}
-           <input type="submit">
-        </form>
+        {{ render_form(form) }}
+         {{ ckeditor.config(name='body') }}
         <script src="https://cdn.ckeditor.com/4.10.0/standard/ckeditor.js"></script>
       </div>
     </div>
