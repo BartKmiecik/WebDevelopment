@@ -117,13 +117,21 @@ def edit_post(post_id):
 
         with app.app_context():
             db.create_all()
-            post = db.get_or_404(BlogPost, post_id)
+            query = db.get_or_404(BlogPost, post_id)
+            post = query
+            print(post)
+            post.id = int(post_id)
             post.date = f'{month} {day} {year}'
-            post.title = form.title.data,
-            post.subtitle = form.subtitle.data,
-            post.author = form.author.data,
-            post.background_url = form.background_url.data,
+            post.title = form.title.data
+            post.subtitle = form.subtitle.data
+            post.author = form.author.data
+            post.img_url = form.background_url.data
             post.body = form.body.data
+
+            print(f'id: {post.id}, date: {post.date}, author: {post.author}')
+            print(f'title: {post.title}, sub: {post.subtitle}')
+            print(f'back: {post.img_url}, body: {post.body}')
+
             db.session.commit()
             return redirect('/')
 
