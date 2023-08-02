@@ -108,14 +108,35 @@ def new_post():
 
 # TODO: edit_post() to change an existing blog post
 
-@app.route('/edit_post/<post_id>')
+@app.route('/edit_post/<post_id>', methods=["GET", "POST"])
 def edit_post(post_id):
+    form = BlogPostForm()
+    if form.validate():
+        x = datetime.datetime.now()
+        year, month, day = x.strftime("%Y"), x.strftime("%b"), x.strftime("%d")
+
+        with app.app_context():
+            db.create_all()
+            post = db.get_or_404(BlogPost, post_id)
+            post.date = f'{month} {day} {year}'
+            post.title = form.title.data,
+            post.subtitle = form.subtitle.data,
+            post.author = form.author.data,
+            post.background_url = form.background_url.data,
+            post.body = form.body.data
+            db.session.commit()
+            return redirect('/')
+
     with app.app_context():
         db.create_all()
         query = db.get_or_404(BlogPost, post_id)
         requested_post = query
         form = BlogPostForm(
-            title=requested_post.title
+            title=requested_post.title,
+            subtitle=requested_post.subtitle,
+            author=requested_post.author,
+            background_url=requested_post.img_url,
+            body=requested_post.body
         )
     return render_template('make-post.html', form=form, post=requested_post)
 
