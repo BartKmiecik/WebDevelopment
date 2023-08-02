@@ -52,10 +52,25 @@ class BlogPostForm(FlaskForm):
     body = CKEditorField("body")
     submit = SubmitField()
 
-@app.route('/')
+
+
+@app.route('/', methods=['GET', 'DELETE'])
 def get_all_posts():
     # TODO: Query the database for all the posts. Convert the data to a python list.
     posts = []
+    try:
+        query = db.get_or_404(BlogPost, request.args.get('to_delete'))
+        post_to_delete = query
+        if post_to_delete is not None:
+            db.create_all()
+            query = db.get_or_404(BlogPost, request.args.get('to_delete'))
+            post_to_delete = query
+            db.session.delete(post_to_delete)
+            db.session.commit()
+    except:
+        pass
+
+
     with app.app_context():
         db.create_all()
         query = db.session.execute(db.select(BlogPost).order_by(BlogPost.id))
@@ -87,9 +102,9 @@ def new_post():
     if form.validate():
         x = datetime.datetime.now()
         year, month, day = x.strftime("%Y"), x.strftime("%b"), x.strftime("%d")
-        query = db.session.execute(db.select(BlogPost).order(BlogPost.id))
+        query = db.session.execute(db.select(BlogPost).order_by(BlogPost.id))
         blog_posts = query.all()
-        idx = blog_posts[-1].id + 1
+        idx = blog_posts[-1][0].id + 1
         new_post = BlogPost(
             body = form.body.data,
             id = idx,
@@ -103,6 +118,7 @@ def new_post():
             db.create_all()
             db.session.add(new_post)
             db.session.commit()
+        return redirect('/')
 
     return render_template('make-post.html', form=form)
 
@@ -125,7 +141,7 @@ def edit_post(post_id):
             post.title = form.title.data
             post.subtitle = form.subtitle.data
             post.author = form.author.data
-            post.img_url = form.background_url.data 
+            post.img_url = form.background_url.data
             post.body = form.body.data
 
             print(f'id: {post.id}, date: {post.date}, author: {post.author}')

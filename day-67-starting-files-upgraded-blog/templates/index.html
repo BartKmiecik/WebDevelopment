@@ -32,6 +32,8 @@
           Posted by
           <a href="#">{{post.author}}</a>
           on {{post.date}}
+
+          <a href="{{ url_for('get_all_posts', to_delete=post.id) }}" methods="DELETE">DELETE X</a>
         </p>
       </div>
       <!-- Divider-->
