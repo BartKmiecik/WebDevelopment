@@ -125,7 +125,7 @@ def edit_post(post_id):
             post.title = form.title.data
             post.subtitle = form.subtitle.data
             post.author = form.author.data
-            post.img_url = form.background_url.data
+            post.img_url = form.background_url.data 
             post.body = form.body.data
 
             print(f'id: {post.id}, date: {post.date}, author: {post.author}')
