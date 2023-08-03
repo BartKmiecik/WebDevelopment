@@ -5,7 +5,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, cur
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
-
+app.config['UPLOAD_FOLDER'] = 'static/files'
 # CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db = SQLAlchemy()
@@ -52,7 +52,7 @@ def register():
             )
             db.session.add(new_user)
             db.session.commit()
-            return redirect(url_for('secrets', name=new_user.name))
+            return render_template("secrets.html", name=new_user.name)
 
     return render_template("register.html")
 
@@ -62,11 +62,9 @@ def login():
     return render_template("login.html")
 
 
-@app.route('/secrets', methods=['GET', 'POST'])
+@app.route('/secrets')
 def secrets():
-    user_name = request.args.get('name')
-    print(user_name)
-    return render_template("secrets.html", user_name=user_name)
+    return render_template("secrets.html")
 
 
 @app.route('/logout')
@@ -74,9 +72,11 @@ def logout():
     pass
 
 
-@app.route('/download')
+@app.route('/download', methods=['GET'])
 def download():
-    pass
+    return send_from_directory(
+        app.config['UPLOAD_FOLDER'], 'cheat_sheet.pdf'
+    )
 
 
 if __name__ == "__main__":
