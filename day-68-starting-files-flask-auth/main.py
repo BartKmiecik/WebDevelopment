@@ -50,7 +50,7 @@ def register():
 
             name = request.form.get('name')
             email = request.form.get('email')
-            password = request.form.get('password')
+            password = request.form.get('password', 'pbkdf2')
             new_user = User(
                 id=idx,
                 name=name,
@@ -64,8 +64,31 @@ def register():
     return render_template("register.html")
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == "POST":
+        # Login and validate the user.
+        # user should be an instance of your `User` class
+        password = request.form.get('password')
+        email = request.form.get('email')
+        print(email, password)
+
+        with app.app_context():
+            db.create_all()
+            user = db.first_or_404(db.select(User).where(User.email == email), description='User not om db')
+            password_correct = werkzeug.security.check_password_hash('pbkdf2', user.password)
+            print(password_correct)
+            db.session.commit()
+
+
+        # flask.flash('Logged in successfully.')
+        #
+        # next = flask.request.args.get('next')
+        # # url_has_allowed_host_and_scheme should check if the url is safe
+        # # for redirects, meaning it matches the request host.
+        # # See Django's url_has_allowed_host_and_scheme for an example.
+        # if not url_has_allowed_host_and_scheme(next, request.host):
+        #     return flask.abort(400)
     return render_template("login.html")
 
 
