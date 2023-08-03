@@ -31,31 +31,29 @@ def home():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        db.create_all()
-        try:
-            query = db.session.execute(db.select(User).order_by(User.id))
-            user = query.all()
-            print(type(user))
-            print(user)
-            print(user[-1])
-            print(user[-1][0])
-            idx = user[-1][0].id + 1
-            print(idx)
-        except:
-            print('No users in database, assignee id = 1')
-            idx = 1
-            print(id)
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = request.form.get('password')
-        new_user = User(
-            id=idx,
-            name=name,
-            email=email,
-            password=password,
-        )
-        db.session.add(new_user)
-        db.session.commit()
+        with app.app_context():
+            db.create_all()
+            try:
+                query = db.session.execute(db.select(User).order_by(User.id))
+                user = query.all()
+                idx = user[-1][0].id + 1
+            except:
+                print('No users in database, assignee id = 1')
+                idx = 1
+
+            name = request.form.get('name')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            new_user = User(
+                id=idx,
+                name=name,
+                email=email,
+                password=password,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('secrets', name=new_user.name))
+
     return render_template("register.html")
 
 
@@ -64,9 +62,11 @@ def login():
     return render_template("login.html")
 
 
-@app.route('/secrets')
+@app.route('/secrets', methods=['GET', 'POST'])
 def secrets():
-    return render_template("secrets.html")
+    user_name = request.args.get('name')
+    print(user_name)
+    return render_template("secrets.html", user_name=user_name)
 
 
 @app.route('/logout')
