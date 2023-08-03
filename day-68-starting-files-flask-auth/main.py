@@ -20,17 +20,42 @@ class User(db.Model):
     name = db.Column(db.String(1000))
  
  
-with app.app_context():
-    db.create_all()
-
+# with app.app_context():
+#     db.create_all()
 
 @app.route('/')
 def home():
     return render_template("index.html")
 
 
-@app.route('/register')
+@app.route('/register', methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        db.create_all()
+        try:
+            query = db.session.execute(db.select(User).order_by(User.id))
+            user = query.all()
+            print(type(user))
+            print(user)
+            print(user[-1])
+            print(user[-1][0])
+            idx = user[-1][0].id + 1
+            print(idx)
+        except:
+            print('No users in database, assignee id = 1')
+            idx = 1
+            print(id)
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        new_user = User(
+            id=idx,
+            name=name,
+            email=email,
+            password=password,
+        )
+        db.session.add(new_user)
+        db.session.commit()
     return render_template("register.html")
 
 
