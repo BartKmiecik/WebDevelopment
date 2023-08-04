@@ -111,6 +111,7 @@ def logout():
 
 
 @app.route('/download', methods=['GET'])
+@login_required
 def download():
     return send_from_directory(
         app.config['UPLOAD_FOLDER'], 'cheat_sheet.pdf'
