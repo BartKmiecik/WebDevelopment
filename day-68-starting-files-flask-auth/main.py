@@ -65,6 +65,7 @@ def register():
 
 
 @app.route('/login', methods=['GET', 'POST'])
+@login_required
 def login():
     if request.method == "POST":
         # Login and validate the user.
