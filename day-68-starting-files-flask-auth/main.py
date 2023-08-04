@@ -65,7 +65,7 @@ def register():
 
 
 @app.route('/login', methods=['GET', 'POST'])
-@login_required
+
 def login():
     if request.method == "POST":
         # Login and validate the user.
@@ -77,7 +77,10 @@ def login():
         with app.app_context():
             db.create_all()
             user = db.first_or_404(db.select(User).where(User.email == email), description='User not om db')
-            password_correct = werkzeug.security.check_password_hash('pbkdf2', user.password)
+            print(user)
+            print(user.id)
+            print(user.email)
+            password_correct = werkzeug.security.check_password_hash(user.password, password)
             print(password_correct)
             db.session.commit()
 
@@ -94,6 +97,7 @@ def login():
 
 
 @app.route('/secrets')
+@login_required
 def secrets():
     return render_template("secrets.html")
 
