@@ -13,9 +13,10 @@ db = SQLAlchemy()
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 # CREATE TABLE IN DB
-class User(db.Model):
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
@@ -27,7 +28,7 @@ class User(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 
 @app.route('/')
@@ -83,7 +84,9 @@ def login():
             password_correct = werkzeug.security.check_password_hash(user.password, password)
             print(password_correct)
             db.session.commit()
-
+            if password_correct:
+                login_user(user)
+                return redirect('/secrets')
 
         # flask.flash('Logged in successfully.')
         #
