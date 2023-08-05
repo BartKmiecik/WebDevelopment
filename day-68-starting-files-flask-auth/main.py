@@ -41,19 +41,18 @@ def register():
     if request.method == "POST":
         with app.app_context():
             db.create_all()
-            try:
-                query = db.session.execute(db.select(User).order_by(User.id))
-                user = query.all()
-                idx = user[-1][0].id + 1
-            except:
-                print('No users in database, assignee id = 1')
-                idx = 1
-
             name = request.form.get('name')
             email = request.form.get('email')
             password = request.form.get('password', 'pbkdf2')
+            try:
+                user = db.one_or_404(db.select(User).where(User.email == email))
+                flash('User already exist')
+                print(user.name)
+                db.session.commit()
+                return render_template("register.html")
+            except:
+                pass
             new_user = User(
-                id=idx,
                 name=name,
                 email=email,
                 password=werkzeug.security.generate_password_hash(password)
