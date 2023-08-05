@@ -1,5 +1,5 @@
 import werkzeug.security
-from flask import Flask, render_template, request, url_for, redirect, flash, send_from_directory
+from flask import Flask, render_template, request, url_for, redirect, flash, send_from_directory, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
@@ -69,33 +69,20 @@ def register():
 
 def login():
     if request.method == "POST":
-        # Login and validate the user.
-        # user should be an instance of your `User` class
         password = request.form.get('password')
         email = request.form.get('email')
-        print(email, password)
 
         with app.app_context():
             db.create_all()
             user = db.first_or_404(db.select(User).where(User.email == email), description='User not om db')
-            print(user)
-            print(user.id)
-            print(user.email)
             password_correct = werkzeug.security.check_password_hash(user.password, password)
-            print(password_correct)
             db.session.commit()
             if password_correct:
                 login_user(user)
                 return redirect('/secrets')
+            else:
+                return abort(400, 'Wrong password, try again')
 
-        # flask.flash('Logged in successfully.')
-        #
-        # next = flask.request.args.get('next')
-        # # url_has_allowed_host_and_scheme should check if the url is safe
-        # # for redirects, meaning it matches the request host.
-        # # See Django's url_has_allowed_host_and_scheme for an example.
-        # if not url_has_allowed_host_and_scheme(next, request.host):
-        #     return flask.abort(400)
     return render_template("login.html")
 
 
