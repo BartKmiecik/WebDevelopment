@@ -33,7 +33,8 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    logged = current_user.is_authenticated
+    return render_template("index.html", logged_in=logged)
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -81,7 +82,7 @@ def login():
             password_correct = werkzeug.security.check_password_hash(user.password, password)
             db.session.commit()
             if password_correct:
-                login_user(user)
+                current_user = login_user(user)
                 return redirect('/secrets')
             else:
                 flash('Wrong password, try again')
@@ -93,7 +94,7 @@ def login():
 @app.route('/secrets')
 @login_required
 def secrets():
-    return render_template("secrets.html")
+    return render_template("secrets.html", logged_in=True)
 
 
 @app.route("/logout")
