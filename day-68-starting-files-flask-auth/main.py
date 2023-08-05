@@ -74,14 +74,19 @@ def login():
 
         with app.app_context():
             db.create_all()
-            user = db.first_or_404(db.select(User).where(User.email == email), description='User not om db')
+            try:
+                user = db.first_or_404(db.select(User).where(User.email == email), description='User not in db')
+            except:
+                flash('User not found')
+                return render_template("login.html")
             password_correct = werkzeug.security.check_password_hash(user.password, password)
             db.session.commit()
             if password_correct:
                 login_user(user)
                 return redirect('/secrets')
             else:
-                return abort(400, 'Wrong password, try again')
+                flash('Wrong password, try again')
+                #return abort(400, 'Wrong password, try again')
 
     return render_template("login.html")
 
