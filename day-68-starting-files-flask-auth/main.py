@@ -105,9 +105,11 @@ def secrets():
     return render_template("secrets.html")
 
 
-@app.route('/logout')
+@app.route("/logout")
+@login_required
 def logout():
-    pass
+    logout_user()
+    return redirect('/')
 
 
 @app.route('/download', methods=['GET'])
