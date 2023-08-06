@@ -55,6 +55,7 @@ class BlogPost(db.Model):
 # TODO: Create a User table for all your registered users. 
 
 
+
 with app.app_context():
     db.create_all()
 
