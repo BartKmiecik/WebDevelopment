@@ -54,6 +54,12 @@ class BlogPost(db.Model):
 
 # TODO: Create a User table for all your registered users. 
 
+class User(db.Model):
+    __tablename__ = "blog_user"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(250), unique=True, nullable=False)
+    email = db.Column(db.String(250), unique=True, nullable=False)
+    password = db.Column(db.String(250), nullable=False)
 
 
 with app.app_context():
@@ -79,7 +85,7 @@ def logout():
 
 @app.route('/')
 def get_all_posts():
-    result = db.session.execute(db.select(BlogPost))
+    result = db.session.execute(db.select(User))
     posts = result.scalars().all()
     return render_template("index.html", all_posts=posts)
 
@@ -87,7 +93,7 @@ def get_all_posts():
 # TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
-    requested_post = db.get_or_404(BlogPost, post_id)
+    requested_post = db.get_or_404(User, post_id)
     return render_template("post.html", post=requested_post)
 
 
@@ -96,7 +102,7 @@ def show_post(post_id):
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
-        new_post = BlogPost(
+        new_post = User(
             title=form.title.data,
             subtitle=form.subtitle.data,
             body=form.body.data,
@@ -113,7 +119,7 @@ def add_new_post():
 # TODO: Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
 def edit_post(post_id):
-    post = db.get_or_404(BlogPost, post_id)
+    post = db.get_or_404(User, post_id)
     edit_form = CreatePostForm(
         title=post.title,
         subtitle=post.subtitle,
