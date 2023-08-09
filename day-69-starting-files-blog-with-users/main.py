@@ -67,9 +67,32 @@ with app.app_context():
 
 
 # TODO: Use Werkzeug to hash the user's password when creating a new user.
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     form = CreateRegisterForm()
+    print('register load')
+    if form.validate_on_submit():
+        print('form validation')
+        user = form.user.data
+        email = form.email.data
+        password = form.password.data
+        try:
+            repeated_user = db.one_or_404(db.select(User).where(User.email == email))
+            print('user found')
+            # TODO flash that user already in db
+        except:
+            print('user not found')
+            new_user = User(username=user,
+                            email=email,
+                            password=password)
+
+            with app.app_context():
+                db.create_all()
+                db.session.add(new_user)
+                db.session.commit()
+            # TODO flash that user been added to db
+
+
     return render_template("register.html", form=form)
 
 
@@ -103,7 +126,7 @@ def show_post(post_id):
 def add_new_post():
     form = CreatePostForm()
     if form.validate_on_submit():
-        new_post = User(
+        new_post = BlogPost(
             title=form.title.data,
             subtitle=form.subtitle.data,
             body=form.body.data,
