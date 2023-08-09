@@ -1,4 +1,6 @@
 from datetime import date
+
+import werkzeug.security
 from flask import Flask, abort, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
@@ -76,22 +78,19 @@ def register():
         user = form.user.data
         email = form.email.data
         password = form.password.data
+        password = werkzeug.security.generate_password_hash(password)
         try:
             repeated_user = db.one_or_404(db.select(User).where(User.email == email))
-            print('user found')
             flash('Email already in use!')
-            # TODO flash that user already in db
         except:
             print('user not found')
             new_user = User(username=user,
                             email=email,
                             password=password)
-
             with app.app_context():
                 db.create_all()
                 db.session.add(new_user)
                 db.session.commit()
-            # TODO flash that user been added to db
             flash('New user created')
     form = CreateRegisterForm()
 
