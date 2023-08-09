@@ -100,7 +100,8 @@ def register():
 # TODO: Retrieve a user from the database based on their email. 
 @app.route('/login')
 def login():
-    return render_template("login.html")
+    form = CreateLoginForm()
+    return render_template("login.html", form=form)
 
 
 @app.route('/logout')
