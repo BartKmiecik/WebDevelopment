@@ -79,6 +79,7 @@ def register():
         try:
             repeated_user = db.one_or_404(db.select(User).where(User.email == email))
             print('user found')
+            flash('Email already in use!')
             # TODO flash that user already in db
         except:
             print('user not found')
@@ -91,7 +92,8 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
             # TODO flash that user been added to db
-
+            flash('New user created')
+    form = CreateRegisterForm()
 
     return render_template("register.html", form=form)
 
