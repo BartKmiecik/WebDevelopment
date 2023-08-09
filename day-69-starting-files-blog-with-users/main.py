@@ -92,15 +92,35 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
             flash('New user created')
-    form = CreateRegisterForm()
 
     return render_template("register.html", form=form)
 
 
 # TODO: Retrieve a user from the database based on their email. 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     form = CreateLoginForm()
+    print('Login')
+    if form.validate_on_submit():
+        print('validation')
+        user = form.user.data
+        password = form.password.data
+        repeated_user = None
+        with app.app_context():
+            db.create_all()
+            try:
+                repeated_user = db.one_or_404(db.select(User).where(User.username == user))
+            except:
+                flash('User not in data base')
+                form = CreateLoginForm()
+                return render_template("login.html", form=form)
+
+            hash_password = repeated_user.password
+            password_match = werkzeug.security.check_password_hash(hash_password, password)
+            if password_match:
+                return redirect('/')
+            flash('Wrong password')
+            print('Password NOT match')
     return render_template("login.html", form=form)
 
 
