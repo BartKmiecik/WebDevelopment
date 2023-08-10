@@ -106,9 +106,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = CreateLoginForm()
-    print('Login')
     if form.validate_on_submit():
-        print('validation')
         user = form.user.data
         password = form.password.data
         repeated_user = None
@@ -147,6 +145,7 @@ def get_all_posts():
 
 # TODO: Allow logged-in users to comment on posts
 @app.route("/post/<int:post_id>")
+@login_required
 def show_post(post_id):
     requested_post = db.get_or_404(BlogPost, post_id)
     return render_template("post.html", post=requested_post)
@@ -154,52 +153,63 @@ def show_post(post_id):
 
 # TODO: Use a decorator so only an admin user can create a new post
 @app.route("/new-post", methods=["GET", "POST"])
+@login_required
 def add_new_post():
-    form = CreatePostForm()
-    if form.validate_on_submit():
-        new_post = BlogPost(
-            title=form.title.data,
-            subtitle=form.subtitle.data,
-            body=form.body.data,
-            img_url=form.img_url.data,
-            author=current_user,
-            date=date.today().strftime("%B %d, %Y")
-        )
-        db.session.add(new_post)
-        db.session.commit()
-        return redirect(url_for("get_all_posts"))
-    return render_template("make-post.html", form=form)
+    if current_user.id == 1:
+        form = CreatePostForm()
+        if form.validate_on_submit():
+            new_post = BlogPost(
+                title=form.title.data,
+                subtitle=form.subtitle.data,
+                body=form.body.data,
+                img_url=form.img_url.data,
+                author=current_user,
+                date=date.today().strftime("%B %d, %Y")
+            )
+            db.session.add(new_post)
+            db.session.commit()
+            return redirect(url_for("get_all_posts"))
+        return render_template("make-post.html", form=form)
+    else:
+        return abort(404, "You don't have permission")
 
 
 # TODO: Use a decorator so only an admin user can edit a post
 @app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+@login_required
 def edit_post(post_id):
-    post = db.get_or_404(User, post_id)
-    edit_form = CreatePostForm(
-        title=post.title,
-        subtitle=post.subtitle,
-        img_url=post.img_url,
-        author=post.author,
-        body=post.body
-    )
-    if edit_form.validate_on_submit():
-        post.title = edit_form.title.data
-        post.subtitle = edit_form.subtitle.data
-        post.img_url = edit_form.img_url.data
-        post.author = current_user
-        post.body = edit_form.body.data
-        db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form, is_edit=True)
-
+    if current_user.id == 1:
+        post = db.get_or_404(User, post_id)
+        edit_form = CreatePostForm(
+            title=post.title,
+            subtitle=post.subtitle,
+            img_url=post.img_url,
+            author=post.author,
+            body=post.body
+        )
+        if edit_form.validate_on_submit():
+            post.title = edit_form.title.data
+            post.subtitle = edit_form.subtitle.data
+            post.img_url = edit_form.img_url.data
+            post.author = current_user
+            post.body = edit_form.body.data
+            db.session.commit()
+            return redirect(url_for("show_post", post_id=post.id))
+        return render_template("make-post.html", form=edit_form, is_edit=True)
+    else:
+        return abort(404, "You don't have permission")
 
 # TODO: Use a decorator so only an admin user can delete a post
 @app.route("/delete/<int:post_id>")
+@login_required
 def delete_post(post_id):
-    post_to_delete = db.get_or_404(BlogPost, post_id)
-    db.session.delete(post_to_delete)
-    db.session.commit()
-    return redirect(url_for('get_all_posts'))
+    if current_user.id == 1:
+        post_to_delete = db.get_or_404(BlogPost, post_id)
+        db.session.delete(post_to_delete)
+        db.session.commit()
+        return redirect(url_for('get_all_posts'))
+    else:
+        return abort(404, "You don't have permission")
 
 
 @app.route("/about")
