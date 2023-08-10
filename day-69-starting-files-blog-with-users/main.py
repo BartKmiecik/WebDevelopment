@@ -34,12 +34,18 @@ ckeditor = CKEditor(app)
 Bootstrap5(app)
 
 # TODO: Configure Flask-Login
-
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 # CONNECT TO DB
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy()
 db.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
 
 
 # CONFIGURE TABLES
@@ -56,7 +62,7 @@ class BlogPost(db.Model):
 
 # TODO: Create a User table for all your registered users. 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = "blog_user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
@@ -118,6 +124,7 @@ def login():
             hash_password = repeated_user.password
             password_match = werkzeug.security.check_password_hash(hash_password, password)
             if password_match:
+                login_user(user)
                 return redirect('/')
             flash('Wrong password')
             print('Password NOT match')
@@ -125,7 +132,9 @@ def login():
 
 
 @app.route('/logout')
+@login_required
 def logout():
+    logout_user()
     return redirect(url_for('get_all_posts'))
 
 
