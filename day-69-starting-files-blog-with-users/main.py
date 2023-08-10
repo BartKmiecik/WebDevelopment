@@ -5,7 +5,7 @@ from flask import Flask, abort, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
 from flask_gravatar import Gravatar
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -124,7 +124,7 @@ def login():
             hash_password = repeated_user.password
             password_match = werkzeug.security.check_password_hash(hash_password, password)
             if password_match:
-                login_user(user)
+                login_user(repeated_user)
                 return redirect('/')
             flash('Wrong password')
             print('Password NOT match')
