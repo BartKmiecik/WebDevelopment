@@ -50,15 +50,13 @@ def load_user(user_id):
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
-    author_id2 = db.relationship("User", back_populates="posts")
     author_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
-    author = db.Column(db.String(250), nullable=False)
+    author = db.relationship("User", back_populates="posts")
     img_url = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-
 
 
 
@@ -70,7 +68,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
-    posts = db.relationship("BlogPost", back_populates="author_id2")
+    posts = db.relationship("BlogPost", back_populates="author")
 
 
 with app.app_context():
@@ -98,7 +96,6 @@ def register():
                 db.session.add(new_user)
                 db.session.commit()
             flash('New user created')
-
     return render_template("register.html", form=form)
 
 
@@ -156,6 +153,9 @@ def show_post(post_id):
 @login_required
 def add_new_post():
     if current_user.id == 1:
+        print(current_user)
+        print(current_user.id)
+        print(current_user.username)
         form = CreatePostForm()
         if form.validate_on_submit():
             new_post = BlogPost(
@@ -163,7 +163,7 @@ def add_new_post():
                 subtitle=form.subtitle.data,
                 body=form.body.data,
                 img_url=form.img_url.data,
-                author=current_user.name,
+                # author=current_user.username,
                 date=date.today().strftime("%B %d, %Y")
             )
             db.session.add(new_post)
@@ -191,7 +191,7 @@ def edit_post(post_id):
             post.title = edit_form.title.data
             post.subtitle = edit_form.subtitle.data
             post.img_url = edit_form.img_url.data
-            post.author = current_user
+            post.author = current_user.username
             post.body = edit_form.body.data
             db.session.commit()
             return redirect(url_for("show_post", post_id=post.id))
