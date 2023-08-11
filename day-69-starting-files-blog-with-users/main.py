@@ -47,14 +47,15 @@ def load_user(user_id):
 
 
 # CONFIGURE TABLES
-class BlogPost(UserMixin, db.Model):
+class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    author = db.relationship("User", back_populates="posts")
+    author = db.Column(db.String(250), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
     img_url = db.Column(db.String(250), nullable=False)
 
 
@@ -66,7 +67,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
-    posts = db.relationship("BlogPost", back_populates="author")
+    posts = relationship("BlogPost", back_populates="author_id")
 
 
 with app.app_context():
