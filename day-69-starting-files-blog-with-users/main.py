@@ -13,8 +13,6 @@ from sqlalchemy.orm import relationship
 # Import your forms from the forms.py
 from forms import CreatePostForm, CreateRegisterForm, CreateLoginForm
 
-
-
 '''
 Make sure the required packages are installed: 
 Open the Terminal in PyCharm (bottom left). 
@@ -49,14 +47,14 @@ def load_user(user_id):
 
 
 # CONFIGURE TABLES
-class BlogPost(db.Model):
+class BlogPost(UserMixin, db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    author = db.Column(db.String(250), nullable=False)
+    author = db.relationship("User", back_populates="posts")
     img_url = db.Column(db.String(250), nullable=False)
 
 
@@ -68,6 +66,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
+    posts = db.relationship("BlogPost", back_populates="author")
 
 
 with app.app_context():
