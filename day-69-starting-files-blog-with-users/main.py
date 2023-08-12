@@ -11,7 +11,7 @@ from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship
 # Import your forms from the forms.py
-from forms import CreatePostForm, CreateRegisterForm, CreateLoginForm
+from forms import CreatePostForm, CreateRegisterForm, CreateLoginForm, CreateCommentForm
 
 '''
 Make sure the required packages are installed: 
@@ -57,7 +57,7 @@ class BlogPost(db.Model):
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    # comments = db.relationship("Comment", backref="author")
+    comments = db.relationship("Comment", backref="parent_post")
 
 
 
@@ -77,7 +77,8 @@ class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(250), unique=False, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
+    author_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
+    post_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
 
 
 with app.app_context():
@@ -154,7 +155,8 @@ def get_all_posts():
 @login_required
 def show_post(post_id):
     requested_post = db.get_or_404(BlogPost, post_id)
-    return render_template("post.html", post=requested_post)
+    form = CreateCommentForm()
+    return render_template("post.html", post=requested_post, form=form)
 
 
 # TODO: Use a decorator so only an admin user can create a new post
@@ -162,9 +164,6 @@ def show_post(post_id):
 @login_required
 def add_new_post():
     if current_user.id == 1:
-        print(current_user)
-        print(current_user.id)
-        print(current_user.username)
         form = CreatePostForm()
         if form.validate_on_submit():
             new_post = BlogPost(
