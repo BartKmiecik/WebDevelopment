@@ -57,6 +57,7 @@ class BlogPost(db.Model):
     subtitle = db.Column(db.String(250), nullable=False)
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
+    # comments = db.relationship("Comment", backref="author")
 
 
 
@@ -69,6 +70,14 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
     posts = db.relationship("BlogPost", backref="author")
+    comments = db.relationship("Comment", backref="author")
+
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.String(250), unique=False, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("blog_posts.id"))
 
 
 with app.app_context():
