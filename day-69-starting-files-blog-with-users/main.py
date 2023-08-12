@@ -50,8 +50,8 @@ def load_user(user_id):
 class BlogPost(db.Model):
     __tablename__ = "blog_posts"
     id = db.Column(db.Integer, primary_key=True)
+    #author = db.relationship("User", back_populates="posts")
     author_id = db.Column(db.Integer, db.ForeignKey("blog_user.id"))
-    author = db.relationship("User", back_populates="posts")
     img_url = db.Column(db.String(250), nullable=False)
     title = db.Column(db.String(250), unique=True, nullable=False)
     subtitle = db.Column(db.String(250), nullable=False)
@@ -68,7 +68,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(250), unique=True, nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
-    posts = db.relationship("BlogPost", back_populates="author")
+    posts = db.relationship("BlogPost", backref="author")
 
 
 with app.app_context():
@@ -163,7 +163,7 @@ def add_new_post():
                 subtitle=form.subtitle.data,
                 body=form.body.data,
                 img_url=form.img_url.data,
-                # author=current_user.username,
+                author=current_user,
                 date=date.today().strftime("%B %d, %Y")
             )
             db.session.add(new_post)
