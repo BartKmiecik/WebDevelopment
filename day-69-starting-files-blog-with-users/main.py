@@ -166,12 +166,6 @@ def show_post(post_id):
         )
         db.session.add(new_comment)
         db.session.commit()
-
-    # print(all_comments)
-    for c in all_comments:
-        print(c)
-        print(c[0].text)
-        print(c[0].author.username)
     return render_template("post.html", post=requested_post, form=form, all_comments=all_comments)
 
 
