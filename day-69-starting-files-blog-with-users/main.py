@@ -155,6 +155,8 @@ def get_all_posts():
 @login_required
 def show_post(post_id):
     requested_post = db.get_or_404(BlogPost, post_id)
+    comments = db.session.execute(db.select(Comment).where(Comment.post_id == post_id))
+    all_comments = comments.all()
     form = CreateCommentForm()
     if form.validate_on_submit():
         new_comment = Comment(
@@ -164,7 +166,13 @@ def show_post(post_id):
         )
         db.session.add(new_comment)
         db.session.commit()
-    return render_template("post.html", post=requested_post, form=form)
+
+    # print(all_comments)
+    for c in all_comments:
+        print(c)
+        print(c[0].text)
+        print(c[0].author.username)
+    return render_template("post.html", post=requested_post, form=form, all_comments=all_comments)
 
 
 # TODO: Use a decorator so only an admin user can create a new post
