@@ -48,7 +48,7 @@ include "header.html" %}
                 <img src="../static/assets/img/default-profile.jpg" />
               </div>
               <div class="commentText">
-                <p>{{ post_comment[0]['text'] }}</p>
+                <p>{{ post_comment[0]['text']|safe }}</p>
                 <span class="date sub-text">{{ post_comment[0]['author']["username"] }}</span>
               </div>
             </li>
